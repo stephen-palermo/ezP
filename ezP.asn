@@ -1,6 +1,4 @@
 
-
-
 -- Exclusion Zone (ez) Protocol (ezP) is used to define the Exclusion Zones and the Activation Windows for the Exclusion Zones.
 -- Revision February 2025, ATIS Non-Terrestrial (NTN) Working Group
 
@@ -47,6 +45,7 @@ ezId INTEGER (1..99999),
 ezName VisibleString (SIZE (3..50)),
 ezDescription VisibleString (SIZE (3..100)),
 ezShape Shape,
+ezPeriodicity ENUMERATED {aperiodic, periodic},
 ezStatus ENUMERATED {active, inactive}
 }
 
@@ -100,68 +99,24 @@ ExclusionZoneActivationRequest ::= SEQUENCE {
 }
 END
 
+ExclusionZoneArray ::= SEQUENCE (SIZE (1..100)) OF ExclusionZone
 
-
-
-
-
-
-
-
-
-
-
-
-CustomerInfo DEFINITIONS AUTOMATIC TAGS ::= BEGIN
-
-CustomerInfo ::= SEQUENCE {
-    companyName    VisibleString (SIZE (3..50)),
-    billingAddress Address,
-    contactPhone   NumericString (SIZE (7..12))
+ExclusionZoneRequests ::= SEQUENCE {
+    ezRequestID INTEGER (1..99999),
+    ezRequestPriority ENUMERATED {high, medium, low},
+    ezRequestDescription VisibleString (SIZE (3..50)),
 }
 
-Address ::= SEQUENCE {
-    street  VisibleString (SIZE (5 .. 50)) OPTIONAL,
-    city    VisibleString (SIZE (2..30)),
-    state   VisibleString (SIZE(2) ^ FROM ("A".."Z")),
-    zipCode NumericString (SIZE(5 | 9))
+ExclusionZoneSatelliteInterceptArray ::= SEQUENCE (SIZE (1..100)) OF ExclusionZoneSatelliteIntercepts
+
+ExclusionZoneSatelliteIntercepts ::= SEQUENCE {
+    ezSatelliteIDs INTEGER (1..99999),
+    ezSatelliteVersion ENUMERATED {v1, v2, v3},
+    ezSatelliteName VisibleString (SIZE (3..50)),
+    ezSatelliteLocation VisibleString (SIZE (3..100)),
+    ezSatelliteStatus ENUMERATED {active, inactive},
+    ezImplmentationMethod ENUMERATED {on-off, beam-steer, attinuation},
 }
 
-ListOfItems ::= SEQUENCE (SIZE (1..100)) OF Item
-
-Item ::= SEQUENCE {
-    itemCode        INTEGER (1..99999),
-    color           VisibleString ("Black" | "Blue" | "Brown"),
-    power           INTEGER (110 | 220),
-    deliveryTime    INTEGER (8..12 | 14..19),
-    quantity        INTEGER (1..1000),
-    unitPrice       REAL (1.00 .. 9999.00),
-    isTaxable       BOOLEAN
-}
-
-billingAddress Address,
-contactPhone   NumericString (SIZE (7..12))
-}
-
-Address::= SEQUENCE {
-street  VisibleString (SIZE (5 .. 50)) OPTIONAL,
-city    VisibleString (SIZE (2..30)),
-state   VisibleString (SIZE(2) ^ FROM ("A".."Z")),
-zipCode NumericString (SIZE(5 | 9))
-}
-
-ListOfItems ::= SEQUENCE (SIZE (1..100)) OF Item
-
-Item ::= SEQUENCE {
-itemCode        INTEGER (1..99999),
-color           VisibleString ("Black" | "Blue" | "Brown"),
-power           INTEGER (110 | 220),
-deliveryTime    INTEGER (8..12 | 14..19),
-quantity        INTEGER (1..1000),
-unitPrice       REAL (1.00 .. 9999.00),
-isTaxable       BOOLEAN
-}
 END
-
-
 
