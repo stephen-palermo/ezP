@@ -1,0 +1,167 @@
+
+
+
+-- Exclusion Zone (ez) Protocol (ezP) is used to define the Exclusion Zones and the Activation Windows for the Exclusion Zones.
+-- Revision February 2025, ATIS Non-Terrestrial (NTN) Working Group
+
+-- ezP carries information between the terrestrial or non-terrestrial NG-RAN and the associated AMF (or equivalent).
+-- ezP supports these functions
+    -- (1) ez creation;
+    -- (2) ez activation;
+    -- (3) ez deactivation;
+    -- (4) ez deletion;
+    -- (5) ez reporting;
+
+-- Exclusion Zone (ez) Protocol supports these operations
+  -- (1) Satellite Operator (or equivalent) is requested to create an Exclusion Zone (ez);
+  -- (2) Satellite Operator (or equivalent) is requested to activate an Exclusion Zone (ez) during a specific time window;
+  -- (3) Satellite Operator (or equivalent) is requested to deactivate an Exclusion Zone (ez);
+  -- (4) Satellite Operator (or equivalent) is requested to delete an Exclusion Zone (ez);
+  -- (5) Satellite Operator (or equivalent) is requested to report the status of an Exclusion Zone (ez);
+        -- (a) Satellite Operator (or equivalent) is requested to provide the status of an Exclusion Zone (ez);
+        -- (b) Satellite Operator (or equivalent) is requested to provide the status of all Exclusion Zones (ez);
+        -- (c) Satellite Operator (or equivalent) is requested to provide the status of all Exclusion Zone Activation Windows;
+        -- (d) Satellite Operator (or equivalent) is requested to provide the status of all Exclusion Zones (ez) and Exclusion Zone Activation Windows;
+    -- (e) Satellite Operator (or equivalent) is requested to provide the status of all Exclusion Zones (ez) and Exclusion Zone Activation Windows for a specific time window;
+-- (6) NG-RAN Service Provider (terrestiral or non-terrestrial) transfers ez response to the Satellite Operator;
+-- (7) NG-RAN Service Provider (terrestrial or non-terrestrial) transfers ez response to the AMF (or equivalent);
+-- (8) NG-RAN Service Provider (terrestrial or non-terrestrial) transfers satellite ephemeral information to the AMF (or equivalent) for the purpose of scheduling an Exclusion Zone (ez);
+
+-- Exclusion Zone (ez) --
+    -- An ez is defined as a fixed geographical area.
+    -- An ez prevents transmission in that geographical area.
+-- An Exclusion Zone (ez) implementation can:
+    -- (1) disable the source of transmission in-orbit to prevent transmission;
+    -- (2) attenuates transmission below a minimum allowed threshold; or
+    -- (3) steers the satellite beams away from the ez.
+-- An Exclusion Zone (ez) can prevent radio frequency or light transmissions.
+-- An Exclusion Zone (ez) can also be referred to as a prohibited area.
+-- An Exclusion Zone (ez) can be activated or deactivated by the satellite operator.
+
+-- Exclusion Zones --
+ExclusionZones DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+ExclusionZone ::= SEQUENCE {
+ezCreateDate DATE,
+ezId INTEGER (1..99999),
+ezName VisibleString (SIZE (3..50)),
+ezDescription VisibleString (SIZE (3..100)),
+ezShape Shape,
+ezStatus ENUMERATED {active, inactive}
+}
+
+Point ::= SEQUENCE {
+    x REAL,
+    y REAL
+}
+
+Circle ::= SEQUENCE {
+    center Point,
+    radius REAL
+}
+
+Rectangle ::= SEQUENCE {
+    topLeft Point,
+    bottomRight Point
+}
+
+Polygon ::= SEQUENCE (SIZE (3..100)) OF Point
+
+Shape ::= CHOICE {
+    circle Circle,
+    rectangle Rectangle,
+    polygon Polygon
+}
+
+END
+
+-- Exclusion Zone Activation Windows --
+ExclusionZoneActivationWindows DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+ExclusionZoneActivationWindow ::= SEQUENCE {
+ezActivationStartDate DATE,
+ezActivationEndDate DATE,
+ezActivationStartTime TIME,
+ezActivationEndTime TIME
+}
+
+END
+
+ExclusionZoneActivationRequests DEFINITIONS AUTOMATIC TAGS ::=
+IMPORTS ExclusionZone FROM ExclusionZones,
+        ExclusionZoneActivationWindow FROM ExclusionZoneActivationWindows;
+
+BEGIN
+
+ExclusionZoneActivationRequest ::= SEQUENCE {
+    ezPriority ENUMERATED {high, med, low},
+    ezId ExclusionZone,
+    eZWindow ExclusionZoneActivationWindow
+}
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+CustomerInfo DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+CustomerInfo ::= SEQUENCE {
+    companyName    VisibleString (SIZE (3..50)),
+    billingAddress Address,
+    contactPhone   NumericString (SIZE (7..12))
+}
+
+Address ::= SEQUENCE {
+    street  VisibleString (SIZE (5 .. 50)) OPTIONAL,
+    city    VisibleString (SIZE (2..30)),
+    state   VisibleString (SIZE(2) ^ FROM ("A".."Z")),
+    zipCode NumericString (SIZE(5 | 9))
+}
+
+ListOfItems ::= SEQUENCE (SIZE (1..100)) OF Item
+
+Item ::= SEQUENCE {
+    itemCode        INTEGER (1..99999),
+    color           VisibleString ("Black" | "Blue" | "Brown"),
+    power           INTEGER (110 | 220),
+    deliveryTime    INTEGER (8..12 | 14..19),
+    quantity        INTEGER (1..1000),
+    unitPrice       REAL (1.00 .. 9999.00),
+    isTaxable       BOOLEAN
+}
+
+billingAddress Address,
+contactPhone   NumericString (SIZE (7..12))
+}
+
+Address::= SEQUENCE {
+street  VisibleString (SIZE (5 .. 50)) OPTIONAL,
+city    VisibleString (SIZE (2..30)),
+state   VisibleString (SIZE(2) ^ FROM ("A".."Z")),
+zipCode NumericString (SIZE(5 | 9))
+}
+
+ListOfItems ::= SEQUENCE (SIZE (1..100)) OF Item
+
+Item ::= SEQUENCE {
+itemCode        INTEGER (1..99999),
+color           VisibleString ("Black" | "Blue" | "Brown"),
+power           INTEGER (110 | 220),
+deliveryTime    INTEGER (8..12 | 14..19),
+quantity        INTEGER (1..1000),
+unitPrice       REAL (1.00 .. 9999.00),
+isTaxable       BOOLEAN
+}
+END
+
+
+
